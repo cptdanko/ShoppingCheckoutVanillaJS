@@ -1,0 +1,19 @@
+{
+  "name": "dius",
+  "version": "1.0.0",
+  "description": "shopping app with JEST tests",
+  "main": "shopping.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "vanilla",
+    "javascript",
+    "jest"
+  ],
+  "author": "Bhuman Soni",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^26.1.0"
+  }
+}

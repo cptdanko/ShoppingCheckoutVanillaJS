@@ -1,0 +1,36 @@
+A checkout system for a store 
+
+4 listed items, {sku, name, price}
+
+
+rules {sku, rule}
+rule e.g. 1 Apple TV free for every 2 purchased! does it mean
+paying for 10 iPad gets you another 5 free?
+so 3 means you pay for 2, 6 means you pay for 4, 9 means, you pay for 6?
+
+(test)
+    -> purchase 1 A Tv and total?
+    -> purchase 2 A Tv and total?
+    -> purchase 3 A Tv and total?
+    -> purcahse 4 A TV and total?
+    -> purcahse 6 A TV and total?
+    -> purcahse 9 A TV and total?
+
+rule 2
+iPad.qty > 4, price drops 499.99 from 549.99
+(test)
+    -> purchase 2 & total?
+    -> purchase 5 & total?
+    -> purchase 4 & total?
+
+rule 3
+free vga adapter for every macbook pro sold
+(test)
+    -> purchase adapter & total?
+    -> purchase MBPro, adapter & total?
+    -> purchase MBPro, adapter & total?
+
+Overall tests
+    -> purchase 4 ipads, 5 apple tvs and 1 MBPro
+
+
