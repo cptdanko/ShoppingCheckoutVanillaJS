@@ -15,9 +15,9 @@ function mockItems() {
 
 describe("Test whether the classes work as expected", () => {
     it("should verify the rules", () => {
-        expect(sModule.rules["random"]).toBeUndefined();
-        expect(sModule.rules["atv"]).toBeTruthy();
-        expect(sModule.rules["mbp"]).toBeTruthy();
+        expect(sModule.defaultRules["random"]).toBeUndefined();
+        expect(sModule.defaultRules()["atv"]).toBeTruthy();
+        //expect(sModule.defaultRules()["mbp"]).toBeTruthy();
     });
 
     it("should create item class", () => {
@@ -31,26 +31,55 @@ describe("Test whether the classes work as expected", () => {
 
     it("should have empty items in checkout", () => {
         let checkout = new sModule.checkout();
-        expect(checkout.items.length).toBe(0);
+        expect(checkout.items.size).toBe(0);
     });
     it("checkout to update cart on item scan", () => {
         let checkout = new sModule.checkout();
         let mock = mockItems();
         checkout.scan(mock.atv);
         checkout.scan(mock.atv);
-        expect(checkout.items.length).toBe(2);
+        expect(checkout.items.get(mock.atv.sku).length).toBe(2);
     })
 });
 
-describe("Calcualte shopping total", () => {
-    it("Should get the right total for 3 Apple TVs and 1 adapter", () => {
+describe("calculations for single item purcahse in varying quantities ", () => {
+
+    it("should only charge for 2/3 apple tvs", () => {
         let checkout = new sModule.checkout();
         let mock = mockItems();
         checkout.scan(mock.atv);
         checkout.scan(mock.atv);
         checkout.scan(mock.atv);
-        checkout.scan(mock.vga);
-        expect(checkout.total()).toBe(249);
+        expect(checkout.total()).toBe(219);
+    });
+
+    it("should only charge for 4/5 apple tvs", () => {
+        let checkout = new sModule.checkout();
+        let mock = mockItems();
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        expect(checkout.total()).toBe(438);
+    });
+
+    it("should only charge for 4/6 apple tvs", () => {
+        let checkout = new sModule.checkout();
+        let mock = mockItems();
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        expect(checkout.total()).toBe(438);
+    });
+    
+    it("1 iPad should have no discount", () => {
+        let checkout = new sModule.checkout();
+        let mock = mockItems();
+        checkout.scan(mock.ipad);
+        expect(checkout.total()).toBe(549.99);
     });
 
     it("3 iPads should have no discount", () => {
@@ -79,5 +108,17 @@ describe("Calcualte shopping total", () => {
         checkout.scan(mock.ipad);
         checkout.scan(mock.ipad);
         expect(checkout.total()).toBe(2499.95);
+    });
+});
+describe("calculations for purchasing different items", () => {
+
+    it("Should get the right total for 3 Apple TVs and 1 adapter", () => {
+        let checkout = new sModule.checkout();
+        let mock = mockItems();
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        checkout.scan(mock.vga);
+        expect(checkout.total()).toBe(249);
     });
 });
