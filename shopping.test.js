@@ -1,4 +1,5 @@
 const sModule = require("./shopping");
+const { checkout } = require("./shopping");
 
 function mockItems() {
     let ipad = new sModule.item("ipd", "Super iPad", 549.99);
@@ -6,7 +7,7 @@ function mockItems() {
     let atv = new sModule.item("atv", "Apple TV", 109.50);
     let vga = new sModule.item("vga", "VGA Adapter", 30);
     return {
-        "ipad": ipad,
+        "ipd": ipad,
         "mbp": mbp,
         "atv": atv,
         "vga": vga
@@ -78,35 +79,35 @@ describe("calculations for single item purcahse in varying quantities ", () => {
     it("1 iPad should have no discount", () => {
         let checkout = new sModule.checkout();
         let mock = mockItems();
-        checkout.scan(mock.ipad);
+        checkout.scan(mock.ipd);
         expect(checkout.total()).toBe(549.99);
     });
 
     it("3 iPads should have no discount", () => {
         let checkout = new sModule.checkout();
         let mock = mockItems();
-        checkout.scan(mock.ipad);
-        checkout.scan(mock.ipad);
-        checkout.scan(mock.ipad);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
         expect(checkout.total()).toBe(1649.97);
     });
     it("4 iPads should have no discount", () => {
         let checkout = new sModule.checkout();
         let mock = mockItems();
-        checkout.scan(mock.ipad);
-        checkout.scan(mock.ipad);
-        checkout.scan(mock.ipad);
-        checkout.scan(mock.ipad);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
         expect(checkout.total()).toBe(2199.96);
     });
     it("More than 4 iPads should have a discount", () => {
         let checkout = new sModule.checkout();
         let mock = mockItems();
-        checkout.scan(mock.ipad);
-        checkout.scan(mock.ipad);
-        checkout.scan(mock.ipad);
-        checkout.scan(mock.ipad);
-        checkout.scan(mock.ipad);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
         expect(checkout.total()).toBe(2499.95);
     });
 });
@@ -120,5 +121,51 @@ describe("calculations for purchasing different items", () => {
         checkout.scan(mock.atv);
         checkout.scan(mock.vga);
         expect(checkout.total()).toBe(249);
+    });
+
+    it("Should only charge for 1/4 vga adapters", () => {
+        let checkout = new sModule.checkout();
+        let mock = mockItems();
+        checkout.scan(mock.mbp);
+        checkout.scan(mock.mbp);
+        checkout.scan(mock.mbp);
+        checkout.scan(mock.vga);
+        checkout.scan(mock.vga);
+        checkout.scan(mock.vga);
+        checkout.scan(mock.vga);
+        checkout.scan(mock.atv);
+        expect(checkout.total()).toBe(4429.47);
+    });
+    it("Should give $50 discount on iPads", () => {
+        //atv, ipd, ipd, atv, ipd, ipd, ipd Total expected: $2718.95
+        let checkout = new sModule.checkout();
+        let mock = mockItems();
+        checkout.scan(mock.atv);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.atv);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
+        checkout.scan(mock.ipd);
+        expect(checkout.total()).toBe(2718.95);
+    });
+    it("Should give one vga adapter for free with mbp", () => {
+        //mbp, vga, ipd Total expected: $1949.98
+        let checkout = new sModule.checkout();
+        let mock = mockItems();
+        checkout.scan(mock.mbp);
+        checkout.scan(mock.vga);
+        checkout.scan(mock.ipd);
+        expect(checkout.total()).toBe(1949.98);
+    });
+    it("Should give one vga adapter for free with mbp", () => {
+        // atv, atv, atv, vga Total expected: $249.00
+        let checkout = new sModule.checkout();
+        let mock = mockItems();
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        checkout.scan(mock.atv);
+        checkout.scan(mock.vga);
+        expect(checkout.total()).toBe(249.00);
     });
 });

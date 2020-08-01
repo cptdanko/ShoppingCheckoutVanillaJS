@@ -37,31 +37,44 @@ let ipadRule = new Discount("ipd", (items) => {
 Array.prototype.partitionWith = function(f) {
     return this.reduce((a, x) => a[f(x)+0].push(x) && a, [[],[]])
 }
-let mbpRule = new Discount("mbp", (items) => {
-    //the rule would be get the adapters in the list
-    //Math.abs(total macbooks - total adapters)
-    //totalmbps * price +  adapters * adapter.price
-    let isMbp = x => x.sku === "mbp";
-    let [mbps, vgas] = items.partitionWith(isMbp);
-    let totalAdapters = Math.abs(mbps.length - vgas.length);
-    let total = mbps.length * mbps[0].price;
-    if(totalAdapters > 0) {
-        total += totalAdapters * vgas[0].price;
-    }
+//the rule is, all items part of the bundle are free 
+let bundleRule = new Discount("mbp", (items) => {
+    //find all the elements without a bundleWith
+    //find the item with bundlewith nil
+    let uItems = items.filter(item => item.bundledWith == null);
+    //let's remove the items from items array
+    //create a map of the bundled items 
+    let total = (uItems.length * uItems[0].price);
+    let bundleMap = new Map();
+    items.forEach(it => {
+        if(it.sku !== uItems[0].sku) {
+            let existingArray = bundleMap.get(it.sku);
+            if(existingArray) {
+                existingArray.push(it);
+            } else {
+                existingArray = [it];
+            }
+            bundleMap.set(it.sku, existingArray);
+        }
+    });
+    bundleMap.forEach(function(value, key){
+        let toCount = value.length - uItems.length;
+        if(toCount > 0) {
+            total  += toCount * value[0].price;
+        }
+    });
     return total;
-});
+    //here we have a map of all the items that aren't part of the array
+
+
+})
 function defaultRules(){
     return {
         "atv": tvRule,
         "ipd" : ipadRule,
-        "mbp": mbpRule,
+        "mbp": bundleRule,
     };
 }
-let ipad = new Item("ipd", "Super iPad", 549.99);
-let mbp = new Item("mbp", "MacBook Pro", 1399.99);
-let atv = new Item("atv", "Apple TV", 109.50);
-let vga = new Item("vga", "VGA Adapter", 30);
-
 class Checkout {
     constructor(rules) {
         //only added this condition here as a 
@@ -138,11 +151,21 @@ class Checkout {
     }
 }
 
+let ipad = new Item("ipd", "Super iPad", 549.99);
+let mbp = new Item("mbp", "MacBook Pro", 1399.99);
+let atv = new Item("atv", "Apple TV", 109.50);
+let vga = new Item("vga", "VGA Adapter", 30, "mbp");
+
 
 let checkout = new Checkout(defaultRules());
+checkout.scan(mbp);
+checkout.scan(mbp);
+checkout.scan(mbp);
 checkout.scan(atv);
-checkout.scan(atv);
-checkout.scan(atv);
+checkout.scan(vga);
+checkout.scan(vga);
+checkout.scan(vga);
+checkout.scan(vga);
 //checkout.scan(vga);
 //checkout.scan(vga);
 //checkout.total();
