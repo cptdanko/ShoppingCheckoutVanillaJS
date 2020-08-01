@@ -5,7 +5,7 @@ function mockItems() {
     let ipad = new sModule.item("ipd", "Super iPad", 549.99);
     let mbp = new sModule.item("mbp", "MacBook Pro", 1399.99);
     let atv = new sModule.item("atv", "Apple TV", 109.50);
-    let vga = new sModule.item("vga", "VGA Adapter", 30);
+    let vga = new sModule.item("vga", "VGA Adapter", 30, "mbp");
     return {
         "ipd": ipad,
         "mbp": mbp,
@@ -134,7 +134,7 @@ describe("calculations for purchasing different items", () => {
         checkout.scan(mock.vga);
         checkout.scan(mock.vga);
         checkout.scan(mock.atv);
-        expect(checkout.total()).toBe(4429.47);
+        expect(checkout.total()).toBe(4339.47);
     });
     it("Should give $50 discount on iPads", () => {
         //atv, ipd, ipd, atv, ipd, ipd, ipd Total expected: $2718.95
@@ -150,7 +150,7 @@ describe("calculations for purchasing different items", () => {
         expect(checkout.total()).toBe(2718.95);
     });
     it("Should give one vga adapter for free with mbp", () => {
-        //mbp, vga, ipd Total expected: $1949.98
+        //mbp, vga, ipd Total expected: $1949.98 but giving 1979
         let checkout = new sModule.checkout();
         let mock = mockItems();
         checkout.scan(mock.mbp);

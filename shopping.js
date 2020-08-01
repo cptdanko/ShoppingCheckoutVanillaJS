@@ -41,13 +41,16 @@ Array.prototype.partitionWith = function(f) {
 let bundleRule = new Discount("mbp", (items) => {
     //find all the elements without a bundleWith
     //find the item with bundlewith nil
+    let total = 0;
     let uItems = items.filter(item => item.bundledWith == null);
     //let's remove the items from items array
     //create a map of the bundled items 
-    let total = (uItems.length * uItems[0].price);
+    if(uItems.length > 0) {
+        total = (uItems.length * uItems[0].price);
+    }
     let bundleMap = new Map();
     items.forEach(it => {
-        if(it.sku !== uItems[0].sku) {
+        if(it.bundledWith !== null) {
             let existingArray = bundleMap.get(it.sku);
             if(existingArray) {
                 existingArray.push(it);
@@ -57,10 +60,14 @@ let bundleRule = new Discount("mbp", (items) => {
             bundleMap.set(it.sku, existingArray);
         }
     });
-    bundleMap.forEach(function(value, key){
-        let toCount = value.length - uItems.length;
-        if(toCount > 0) {
-            total  += toCount * value[0].price;
+    bundleMap.forEach(function(value, key) {
+        if(uItems.length > 0) {
+            let toCount = value.length - uItems.length;
+            if(toCount > 0) {
+                total  += toCount * value[0].price;
+            }
+        } else {
+            total  += value.length * value[0].price;
         }
     });
     return total;
@@ -159,13 +166,8 @@ let vga = new Item("vga", "VGA Adapter", 30, "mbp");
 
 let checkout = new Checkout(defaultRules());
 checkout.scan(mbp);
-checkout.scan(mbp);
-checkout.scan(mbp);
-checkout.scan(atv);
 checkout.scan(vga);
-checkout.scan(vga);
-checkout.scan(vga);
-checkout.scan(vga);
+checkout.scan(ipad);
 //checkout.scan(vga);
 //checkout.scan(vga);
 //checkout.total();
