@@ -34,9 +34,6 @@ let ipadRule = new Discount("ipd", (items) => {
     }
     return totalPrice;
 });
-Array.prototype.partitionWith = function(f) {
-    return this.reduce((a, x) => a[f(x)+0].push(x) && a, [[],[]])
-}
 //the rule is, all items part of the bundle are free 
 let bundleRule = new Discount("mbp", (items) => {
     //find all the elements without a bundleWith
@@ -116,6 +113,12 @@ class Checkout {
     addRule(rule) {
         this.rules.push(rule);
     }
+    //implement this function. I imagine
+    //new rules to be added to a the shop
+    //number of times in the year, Xmas, Easter etc
+    removeRule() { 
+
+    }
     /* using the old style here, should refactor it to use ES6 reduce */
     getItemScanMap() {
         //map each sku to an item array
@@ -158,6 +161,13 @@ class Checkout {
     }
 }
 
+module.exports = {
+    "checkout": Checkout,
+    "item": Item,
+    "defaultRules": defaultRules
+}
+
+/*
 let ipad = new Item("ipd", "Super iPad", 549.99);
 let mbp = new Item("mbp", "MacBook Pro", 1399.99);
 let atv = new Item("atv", "Apple TV", 109.50);
@@ -171,10 +181,4 @@ checkout.scan(ipad);
 //checkout.scan(vga);
 //checkout.scan(vga);
 //checkout.total();
-console.log(`Total is => ${checkout.total()}`);
-
-module.exports = {
-    "checkout": Checkout,
-    "item": Item,
-    "defaultRules": defaultRules
-}
+console.log(`Total is => ${checkout.total()}`);*/
