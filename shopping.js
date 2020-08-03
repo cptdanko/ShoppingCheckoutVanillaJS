@@ -14,17 +14,19 @@ a rule which would adjust it's price
 */
 class Discount {
     constructor(sku, apply) {
-        this.sky = sku;
+        this.sku = sku;
         //apply function would perform discount
         //operation on the items and return result
         this.apply = apply;
     }
 }
-
+/* For every 2 tvs bought give 1 free */
 let tvRule = new Discount("atv", (items) => {
     let actualQty = items.length - Math.floor(items.length / 3);
     return actualQty * items[0].price;
 });
+
+/* If more than 4 iPads are purchased, then charge 499.99 each */
 let ipadRule = new Discount("ipd", (items) => {
     let totalPrice;
     if(items.length > 4) {
@@ -34,17 +36,19 @@ let ipadRule = new Discount("ipd", (items) => {
     }
     return totalPrice;
 });
-//the rule is, all items part of the bundle are free 
+
+/* Macbook Pro(MBP) bundle rule: for every MBP bought give 1 vga adapter free  */
 let bundleRule = new Discount("mbp", (items) => {
-    //find all the elements without a bundleWith
-    //find the item with bundlewith nil
+    //find all the elements without a bundleWith sku
+    //they will be primary items, so charge full price for them
+    //the rest will be given free
     let total = 0;
-    let uItems = items.filter(item => item.bundledWith == null);
-    //let's remove the items from items array
-    //create a map of the bundled items 
-    if(uItems.length > 0) {
-        total = (uItems.length * uItems[0].price);
+    let primaryItems = items.filter(item => item.bundledWith == null);
+    
+    if(primaryItems.length > 0) {
+        total = (primaryItems.length * primaryItems[0].price);
     }
+    //create a map of bundled items
     let bundleMap = new Map();
     items.forEach(it => {
         if(it.bundledWith !== null) {
@@ -57,20 +61,20 @@ let bundleRule = new Discount("mbp", (items) => {
             bundleMap.set(it.sku, existingArray);
         }
     });
-    bundleMap.forEach(function(value, key) {
-        if(uItems.length > 0) {
-            let toCount = value.length - uItems.length;
+    //items = bundledItems, only charge 
+    //BUG: what if we bundle more than 1 item 
+    //and items have different price?
+    bundleMap.forEach(function(items, key) {
+        if(primaryItems.length > 0) {
+            let toCount = items.length - primaryItems.length;
             if(toCount > 0) {
-                total  += toCount * value[0].price;
+                total  += toCount * items[0].price;
             }
         } else {
-            total  += value.length * value[0].price;
+            total  += items.length * items[0].price;
         }
     });
     return total;
-    //here we have a map of all the items that aren't part of the array
-
-
 })
 function defaultRules(){
     return {
@@ -100,6 +104,11 @@ class Checkout {
         }
         items.set(sku, existingItems);
     }
+    /* maintain a map of items in the cart 
+    where items are saved by main SKU, unless 
+    they have a bundleWith sku set to not null
+    in which case, they will be store under main item SKU
+    */
     scan(item) {
         if(item.bundledWith != null) {
             this.appendItem(item.bundledWith, item, this.items);
@@ -107,36 +116,15 @@ class Checkout {
             this.appendItem(item.sku, item, this.items);
         }
     }
-    //if Java or Typescript, this would be anything
-    //that would be implementing the interface rule
-    //which will have an apply method that takes items
+    /* at present, the test coverage doesn't include this */
     addRule(rule) {
         this.rules.push(rule);
     }
-    //implement this function. I imagine
     //new rules to be added to a the shop
-    //number of times in the year, Xmas, Easter etc
-    removeRule() { 
-
-    }
-    /* using the old style here, should refactor it to use ES6 reduce */
-    getItemScanMap() {
-        //map each sku to an item array
-        //let itemQtyMap = new Map();
-        this.items.forEach(item => {
-            //the belo condition isn't good but not sure
-            //how to bundle vga and mac together?
-            if(item.bundledWith != null) {
-                itemQtyMap.set(item.sku, existingItems);
-            } else if(itemQtyMap.has(item.sku)) {
-                let existingItems = itemQtyMap.get(item.sku);
-                existingItems.push(item);
-                itemQtyMap.set(item.sku, existingItems);
-            } else {
-                itemQtyMap.set(item.sku, [item]);
-            }
-        });
-        return itemQtyMap;
+    //number of times in the year, Xmas, Easter
+    //so remove the old rules
+    removeRule(sku) { 
+        delete this.rules[sku];
     }
     total() {
         //do we log total to console?'
@@ -146,25 +134,30 @@ class Checkout {
         //now we have a map of items and their quantaties
         //apply the rules
         let total = 0;
-        itemQtyMap.forEach((value, key) => {
-            let rule = this.rules[key];
+        itemQtyMap.forEach((items, sku) => {
+            let rule = this.rules[sku];
             let itemsCost = 0;
             if(rule != undefined && rule != null) {
-                itemsCost = rule.apply(value);    
-            } else if(value[0] != undefined) {
+                itemsCost = rule.apply(items);    
+            } else if(items[0] != undefined) {
                 //there could be a case where a rule is not defined
-                itemsCost = value.length * value[0].price;
+                //itemsCost = value.length * value[0].price;
+                //looping through each item in the list and adding the price
+                //so in case we have a bundled item, it's correct price is
+                //added to the total instead of the item it was bundled with
+                items.forEach(i => {    
+                    total += i.price;
+                })
             }
             total += itemsCost;
         });
         return total;
     }
 }
-
 module.exports = {
     "checkout": Checkout,
     "item": Item,
-    "defaultRules": defaultRules
+    "defaultRules": defaultRules,
 }
 
 /*

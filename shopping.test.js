@@ -1,11 +1,11 @@
 const sModule = require("./shopping");
-const { checkout } = require("./shopping");
 
 function mockItems() {
     let ipad = new sModule.item("ipd", "Super iPad", 549.99);
     let mbp = new sModule.item("mbp", "MacBook Pro", 1399.99);
     let atv = new sModule.item("atv", "Apple TV", 109.50);
     let vga = new sModule.item("vga", "VGA Adapter", 30, "mbp");
+    
     return {
         "ipd": ipad,
         "mbp": mbp,
@@ -158,14 +158,14 @@ describe("calculations for purchasing different items", () => {
         checkout.scan(mock.ipd);
         expect(checkout.total()).toBe(1949.98);
     });
-    it("Should give one vga adapter for free with mbp", () => {
+    it("Should charget for VGA adapter after removing bundle rule", () => {
         // atv, atv, atv, vga Total expected: $249.00
         let checkout = new sModule.checkout();
         let mock = mockItems();
-        checkout.scan(mock.atv);
-        checkout.scan(mock.atv);
-        checkout.scan(mock.atv);
+        checkout.removeRule("mbp");
+        checkout.scan(mock.mbp);
         checkout.scan(mock.vga);
-        expect(checkout.total()).toBe(249.00);
+        checkout.scan(mock.ipd);
+        expect(checkout.total()).toBe(1979.98);
     });
 });
