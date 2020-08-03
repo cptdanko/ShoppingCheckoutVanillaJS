@@ -110,6 +110,20 @@ describe("calculations for single item purcahse in varying quantities ", () => {
         checkout.scan(mock.ipd);
         expect(checkout.total()).toBe(2499.95);
     });
+    it("Should charge full price for Macbook pros" , () => {
+        let checkout = new sModule.checkout();
+        let mock = mockItems();
+        checkout.scan(mock.mbp);
+        checkout.scan(mock.mbp);
+        expect(checkout.total()).toBe(2799.98);
+    });
+    it("Should charge full price for vga adapters" , () => {
+        let checkout = new sModule.checkout();
+        let mock = mockItems();
+        checkout.scan(mock.vga);
+        checkout.scan(mock.vga);
+        expect(checkout.total()).toBe(60);
+    });
 });
 describe("calculations for purchasing different items", () => {
 
@@ -135,6 +149,14 @@ describe("calculations for purchasing different items", () => {
         checkout.scan(mock.vga);
         checkout.scan(mock.atv);
         expect(checkout.total()).toBe(4339.47);
+    });
+    it("Should give adapter for free, if scanned before mbp", () => {
+        let checkout = new sModule.checkout();
+        let mock = mockItems();
+        checkout.scan(mock.vga);
+        checkout.scan(mock.mbp);
+        checkout.scan(mock.atv);
+        expect(checkout.total()).toBe(1509.49);
     });
     it("Should give $50 discount on iPads", () => {
         //atv, ipd, ipd, atv, ipd, ipd, ipd Total expected: $2718.95

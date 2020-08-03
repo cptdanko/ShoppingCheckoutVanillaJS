@@ -1,3 +1,6 @@
+//should this be const?
+let iPad_DISCOUNT_PRICE = 499.99;
+
 class Item {
 
     constructor(sku, name, price, bundledWith) {
@@ -20,7 +23,9 @@ class Discount {
         this.apply = apply;
     }
 }
-/* For every 2 tvs bought give 1 free */
+/* For every 2 tvs bought give 1 free 
+not entirely sure how but this function 
+can be simplified */
 let tvRule = new Discount("atv", (items) => {
     let actualQty = items.length - Math.floor(items.length / 3);
     return actualQty * items[0].price;
@@ -30,7 +35,7 @@ let tvRule = new Discount("atv", (items) => {
 let ipadRule = new Discount("ipd", (items) => {
     let totalPrice;
     if(items.length > 4) {
-        totalPrice = items.length * 499.99;
+        totalPrice = items.length * iPad_DISCOUNT_PRICE;
     } else {
         totalPrice = items.length * items[0].price;
     }
@@ -75,7 +80,8 @@ let bundleRule = new Discount("mbp", (items) => {
         }
     });
     return total;
-})
+});
+/* the ids are hard coded? */
 function defaultRules(){
     return {
         "atv": tvRule,
@@ -83,6 +89,7 @@ function defaultRules(){
         "mbp": bundleRule,
     };
 }
+
 class Checkout {
     constructor(rules) {
         //only added this condition here as a 
@@ -159,19 +166,3 @@ module.exports = {
     "item": Item,
     "defaultRules": defaultRules,
 }
-
-/*
-let ipad = new Item("ipd", "Super iPad", 549.99);
-let mbp = new Item("mbp", "MacBook Pro", 1399.99);
-let atv = new Item("atv", "Apple TV", 109.50);
-let vga = new Item("vga", "VGA Adapter", 30, "mbp");
-
-
-let checkout = new Checkout(defaultRules());
-checkout.scan(mbp);
-checkout.scan(vga);
-checkout.scan(ipad);
-//checkout.scan(vga);
-//checkout.scan(vga);
-//checkout.total();
-console.log(`Total is => ${checkout.total()}`);*/
