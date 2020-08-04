@@ -46,7 +46,7 @@ SKUs Scanned: mbp, vga, ipd
 Total expected: $1949.98"
 
 # Solution
-The Solution is built using a simple Javascript using some of the new Ecmascript 6 features.
+The Solution is built using Javascript using some of the new Ecmascript 6 features.
 
 ### Tech Stack
 - Vanilla Javascript with ES6 classes
