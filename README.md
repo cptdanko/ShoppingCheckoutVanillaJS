@@ -144,10 +144,7 @@ describe("calculations for purchasing different items", () => {
 - The add rule method in checkout class doesn't work
 - Add a method to modify existing rule e.g. > 4 ipads to be $509.50 instead of $499.99
 - Parametrise all the object ids, right now 'mbp', 'atv' hard coded right now
-- Position the code logically and better
-- Improve the code comments
-- Think edge cases and add a few more sensible unit tests
-- Overall, parts of the code look unecessarily convoluted, improve it
+- Overall, parts of the code look unecessarily convoluted, improve it (not sure how?)
 
 # Useful Links
 - [Ecmascript 6] -> New features overview and comparison
