@@ -141,7 +141,7 @@ describe("calculations for purchasing different items", () => {
 ```
 
 ## TO-DO (future improvements)
-- The add rule method in checkout class doesn't work
+- The add rule method in checkout class isn't implemented
 - Add a method to modify existing rule e.g. > 4 ipads to be $509.50 instead of $499.99
 - Parametrise all the object ids, right now 'mbp', 'atv' hard coded right now
 - Overall, parts of the code look unecessarily convoluted, improve it (not sure how?)
