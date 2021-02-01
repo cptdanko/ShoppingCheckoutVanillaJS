@@ -1,6 +1,6 @@
 # Shopping problem solving exercise
 
-A simple shopping app with item scanning and discount application.
+A simple shopping app with item scanning and discount application. You can checkout other solutions to Javascript problem solving e.g. [RxJS Observables vs Promise here] 
 # Problem
 Build the checkout system. We will start with the following products in our catalogue
 
@@ -154,3 +154,4 @@ describe("calculations for purchasing different items", () => {
 [Using Matchers in JEST]: https://jestjs.io/docs/en/using-matchers
 [Getting started with JEST]: https://jestjs.io/docs/en/getting-started
 [Ecmascript 6]: http://es6-features.org/#ClassDefinition
+[RxJS Observables vs Promise here]: https://mydaytodo.com/rxjs-observables-vs-javascript-promise/
